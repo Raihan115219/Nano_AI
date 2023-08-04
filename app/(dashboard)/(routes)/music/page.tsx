@@ -18,8 +18,10 @@ import { formSchema } from "./constants";
 import Heading from "@/components/Heading";
 import Empty from "@/components/empty";
 import { Loader } from "@/components/loader";
+import { useProModal } from "@/Hooks/use-pro-modal";
 
 const MusicPage = () => {
+  const proModel = useProModal();
   const router = useRouter();
   const [music, setMusic] = useState<string>();
   // const proModal = useProModal();
@@ -43,7 +45,11 @@ const MusicPage = () => {
       form.reset();
     } catch (error: any) {
       // pro functionality will be here
-      console.log("FE error from submit", error);
+      if (error?.response?.status === 403) {
+        proModel.onOpen();
+      } else {
+        toast.error("something went wrong");
+      }
     } finally {
       router.refresh();
     }

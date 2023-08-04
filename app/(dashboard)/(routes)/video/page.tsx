@@ -17,8 +17,10 @@ import { formSchema } from "./constants";
 import Heading from "@/components/Heading";
 import Empty from "@/components/empty";
 import { Loader } from "@/components/loader";
+import { useProModal } from "@/Hooks/use-pro-modal";
 
 const VideoPage = () => {
+  const proModal = useProModal();
   const router = useRouter();
   const [video, setVideo] = useState<string>();
 
@@ -39,7 +41,11 @@ const VideoPage = () => {
       form.reset();
     } catch (error: any) {
       // pro functionality will be here
-      console.log("FE error from submit", error);
+      if (error?.response?.status) {
+        proModal.onOpen();
+      } else {
+        toast.error("something went wrong");
+      }
     } finally {
       router.refresh();
     }

@@ -14,18 +14,19 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
-// import { useProModal } from "@/hooks/use-pro-modal";
+
 import { formSchema } from "./constants";
 import Heading from "@/components/Heading";
 import Empty from "@/components/empty";
 import { Loader } from "@/components/loader";
 import { UserAvatar } from "@/components/UserAvatar";
 import { BotAvatar } from "@/components/BotAvatar";
+import { useProModal } from "@/Hooks/use-pro-modal";
 
 const ConversationPage = () => {
   const router = useRouter();
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
-  // const proModal = useProModal();
+  const proModal = useProModal();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -55,7 +56,11 @@ const ConversationPage = () => {
       form.reset();
     } catch (error: any) {
       // pro functionality will be here
-      console.log("FE error from submit", error);
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      } else {
+        toast.error("something went wrong");
+      }
     } finally {
       router.refresh();
     }

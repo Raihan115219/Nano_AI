@@ -27,8 +27,10 @@ import {
 } from "@/components/ui/select";
 import { Card, CardFooter } from "@/components/ui/card";
 import Image from "next/image";
+import { useProModal } from "@/Hooks/use-pro-modal";
 
 const ImagePage = () => {
+  const proModal = useProModal();
   const [images, setImages] = useState<string[]>([]);
   const router = useRouter();
 
@@ -51,8 +53,11 @@ const ImagePage = () => {
       setImages(urls);
       form.reset();
     } catch (error: any) {
-      // pro functionality will be here
-      console.log("FE error from submit", error);
+      if (error?.response?.status) {
+        proModal.onOpen();
+      } else {
+        toast.error("something went wrong");
+      }
     } finally {
       router.refresh();
     }
